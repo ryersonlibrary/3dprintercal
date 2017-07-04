@@ -1,5 +1,4 @@
 //Serve index.html in an embeddable format
-
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index').setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
