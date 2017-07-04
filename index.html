@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1404.47">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;!--</p>
+<p class="p1">TODO</p>
+<p class="p2"><br></p>
+<p class="p1">ADD LOADING SCREEN Ref. https://stackoverflow.com/questions/12041943/implementing-the-loading-callback-with-fullcalendar</p>
+<p class="p1">--&gt;</p>
+<p class="p1">&lt;html&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt; DME Printer Bookng App&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!--&lt;link rel="stylesheet" href=""&gt;<span class="Apple-converted-space">  </span>USE THIS FOR YOUR STYLING<span class="Apple-converted-space">  </span>--&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.min.css"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/gcal.min.js'&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;base target="_top"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$(function() {// document ready</p>
+<p class="p1"><span class="Apple-converted-space">        </span>//retrieve user email</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var user;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var userFunc = function(email){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>user = email;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p1"><span class="Apple-converted-space">        </span>google.script.run.withSuccessHandler(userFunc).getUser();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>//retrieve user certification state</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var cert;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var certFunc = function(certLevel){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>cert = certLevel;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>google.script.run.withSuccessHandler(certFunc).getUserCertification();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Retrieve list of available printers from printer list sheet</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var updatePrinters = function(printers){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>//console.log(printers);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>//create string to push a dropdown menu with the bookable printers</p>
+<p class="p1"><span class="Apple-converted-space">          </span>var insert = "";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>for(var printer in printers){</p>
+<p class="p1"><span class="Apple-converted-space">            </span>insert += "&lt;option value=\"" + printers[printer] + "\"&gt;" + printers[printer] + "&lt;/option&gt;";</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">          </span>$('#printers').append(insert);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>$('#printersForm').append(insert);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p1"><span class="Apple-converted-space">        </span>//call google script and push return to updatePrinters()</p>
+<p class="p1"><span class="Apple-converted-space">        </span>google.script.run.withSuccessHandler(updatePrinters).getPrinters();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var calendar = $('#calendar').fullCalendar({</p>
+<p class="p1"><span class="Apple-converted-space">          </span>//timezone : "UTC",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>header : {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>left : 'prev',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>center : 'title',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>right : 'today next'</p>
+<p class="p1"><span class="Apple-converted-space">          </span>},</p>
+<p class="p1"><span class="Apple-converted-space">          </span>weekends: false,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>businessHours: {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>start: '10:00',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>end: '18:00',</p>
+<p class="p1"><span class="Apple-converted-space">          </span>},</p>
+<p class="p1"><span class="Apple-converted-space">          </span>height : "auto",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>defaultView : "agendaWeek",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>allDaySlot : false,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>minTime : "10:00:00",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>maxTime : "18:00:00",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>nowIndicator: true,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>//selectable: true,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>selectConstraint: "businessHours",</p>
+<p class="p1"><span class="Apple-converted-space">          </span>events : function(start, end, timezone, callback){</p>
+<p class="p1"><span class="Apple-converted-space">             </span>var updateEvents = function(events){</p>
+<p class="p1"><span class="Apple-converted-space">              </span>for( var event in events ) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>calendar.fullCalendar('renderEvent', events[event]);</p>
+<p class="p1"><span class="Apple-converted-space">              </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>google.script.run.withSuccessHandler(updateEvents).getEvents(document.getElementById('printers').value, moment(start).format("x"), moment(end).format("x"));</p>
+<p class="p1"><span class="Apple-converted-space">          </span>},</p>
+<p class="p1"><span class="Apple-converted-space">          </span>selectable : true,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>selectHelper : true,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>select : function(start, end) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>$('#email').val(user);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>$('#email').attr("readonly", "true");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>$('#date-input').val(moment(start).format("YYYY-MM-DD"));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>$('#start-time-input').val(moment(start).format("HH:mm:ss"));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>$('#end-time-input').val(moment(end).format("HH:mm:ss"));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if($('#printers').val() != null)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>$('#printersForm').val($('#printers').val())</p>
+<p class="p1"><span class="Apple-converted-space">            </span>var isConflict = checkTimeConflict($('#date-input').val(),$('#start-time-input').val(),$('#end-time-input').val(),$('#printersForm').val());</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(!cert)</p>
+<p class="p1"><span class="Apple-converted-space">              </span>$('#accept').attr("disabled", "true");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>$("#bookingModal").modal({backdrop: "true"});</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>function setConflict(conflict){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(!conflict || $('#printersForm').val() == null)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>//There is a conflicting booking, set accept button to disabled</p>
+<p class="p1"><span class="Apple-converted-space">          </span>$('#accept').attr("disabled", true);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else</p>
+<p class="p1"><span class="Apple-converted-space">          </span>$('#accept').removeAttr("disabled", false);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>function checkTimeConflict(date, start, end, printer){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var year = parseInt(date.substring(0,4));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var month = parseInt(date.substring(5,7));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var date = parseInt(date.substring(8));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var startHour = parseInt(start.substring(0,2));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var startMinute = parseInt(start.substring(3,5));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var endHour = parseInt(end.substring(0,2));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var endMinute = parseInt(end.substring(3,5));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var startDate = new Date(year, month-1, date, startHour, startMinute);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var endDate = new Date(year, month-1, date, endHour, endMinute);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>google.script.run.withSuccessHandler(setConflict).getBookable(startDate.getTime(), endDate.getTime(), printer);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>function completeBooking(){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>$('#calendar').fullCalendar('refetchEvents');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>function book(date, start, end, printer){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var year = parseInt(date.substring(0,4));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var month = parseInt(date.substring(5,7));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var date = parseInt(date.substring(8));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var startHour = parseInt(start.substring(0,2));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var startMinute = parseInt(start.substring(3,5));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var endHour = parseInt(end.substring(0,2));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var endMinute = parseInt(end.substring(3,5));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var startDate = new Date(year, month-1, date, startHour, startMinute);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>var endDate = new Date(year, month-1, date, endHour, endMinute);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>google.script.run.withSuccessHandler(completeBooking).createBooking(startDate.getTime(), endDate.getTime(), printer);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="page-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;3D Printer Reservation System&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="calendar"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="printerList" class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;select id="printers" class="form-control" onchange="$('#calendar').fullCalendar('refetchEvents');"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="none" selected&gt;All Printers&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal fade" id="bookingModal" role="dialog"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="modal-dialog"&gt;</p>
+<p class="p2"><span class="Apple-converted-space">      </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="modal-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="modal-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button type="button" class="close" data-dismiss="modal"&gt;&amp;times;&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h4 class="modal-title"&gt;New Printer Booking&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="modal-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- ADD BOOKING FORM HERE --&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;form&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="inputEmail"&gt;Ryerson Email Address&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="email" class="form-control" id="email" placeholder="Enter email"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">              </span></p>
+<p class="p2"><span class="Apple-converted-space">              </span></p>
+<p class="p2"><span class="Apple-converted-space">              </span></p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="date-input" class="col-2 col-form-label"&gt;Date&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="col-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>&lt;input class="form-control" type="date" id="date-input" onchange="checkTimeConflict($('#date-input').val(),$('#start-time-input').val(),$('#end-time-input').val(),$('#printersForm').val())"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="start-time-input" class="col-2 col-form-label"&gt;Start Time&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="col-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>&lt;input class="form-control" type="time" id="start-time-input" onchange="checkTimeConflict($('#date-input').val(),$('#start-time-input').val(),$('#end-time-input').val(),$('#printersForm').val())"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="end-time-input" class="col-2 col-form-label"&gt;End Time&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="col-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>&lt;input class="form-control" type="time" id="end-time-input" onchange="checkTimeConflict($('#date-input').val(),$('#start-time-input').val(),$('#end-time-input').val(),$('#printersForm').val())"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">              </span></p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div id="printerListForm" class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="printersForm" class="col-2 col-form-label"&gt;Printer&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;select id="printersForm" class="col-10 form-control" onchange="checkTimeConflict($('#date-input').val(),$('#start-time-input').val(),$('#end-time-input').val(),$('#printersForm').val())"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                  </span>&lt;option value="none" disabled hidden&gt;---&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">              </span></p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="inputFile"&gt;Upload File&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="file" class="form-control-file" id="inputFile"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;small id="fileHelp" class="form-text text-muted"&gt;Choose a file to be sent to your printer. File types accepted: GCode (*.&lt;strong&gt;gcode&lt;/strong&gt;)&lt;br&gt;File may be checked by DME staff&lt;/small&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">              </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/form&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="modal-footer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button type="button" id="accept" class="btn btn-primary" data-dismiss="modal" onclick="book($('#date-input').val(),$('#start-time-input').val(),$('#end-time-input').val(),$('#printersForm').val())"&gt;Accept&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button type="button" class="btn btn-default" data-dismiss="modal"&gt;Close&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">      </span></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
