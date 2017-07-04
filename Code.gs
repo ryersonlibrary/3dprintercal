@@ -3,7 +3,7 @@
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index').setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
-\
+
 /*
 retrieve events from the google calendar 'Schedule Printers'
 TODO: Retrieve events based on users perferred printer
